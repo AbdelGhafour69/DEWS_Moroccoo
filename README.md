@@ -18,13 +18,20 @@ The full architecture is illustrated in the figure bellow:
 - [Prompt Generator](#prompt-generator)
 
 ### Student Record Processor
-The student data processor contains two sub-components. First, the vectorizer transforms all data features into numerical values. This includes using techniques such as one-hot encoding to transform categorical features e.g. students’ genders, handicaps, and living areas. Moreover, student representation can also be done through text embedding generation. This can be done by transforming all the tabular data into textual data and using embedding models like Sentence-BERT. The mapper on the other hand transforms all categorical features to their textual meaning. This will make the prompt creation process easier. Moreover, it is worth noting that when we encounter a missing value in a query, its mapping is set to “Not available” to avoid the missing value imputation problems we mentioned before.
+The student data processor contains two sub-components. First, the vectorizer transforms all data features into numerical values. This includes using techniques such as one-hot encoding to transform categorical features e.g. students’ genders, handicaps, and living areas. 
+Moreover, student representation can also be done through text embedding generation. This can be done by transforming all the tabular data into textual data and using embedding models like Sentence-BERT. 
+
+The mapper on the other hand transforms all categorical features to their textual meaning. This will make the prompt creation process easier. Moreover, it is worth noting that when we encounter a missing value in a query, its mapping is set to “Not available” to avoid the missing value imputation problems we mentioned before.
+
 The vectorizer and the mapper generate two sub-datasets each containing information on both dropout and non-dropout students, which are vectorized and mapped. These four sub-datasets are used in the similarity retriever which we detail next.
+
 To vectorize our data, we used one-hot encoding for categorical features. Numerical features were left as is. On the other hand, a mapping dictionary was employed in the mapper level which we present in [Dataset](#dataset).
 
 ### Similarity Retriever
 The similarity retriever is responsible for the RAG part of our solution. Using the query student’s data vectors or generated embeddings, the similarity retriever searches for the most similar shots from the already vectorized shot pool. The number of shots to learn from can also affect the performance of the prediction. However, all of the LLMs have a limited permitted token length which prohibits the use of a larger number of shots.
+
 Our RAG-assisted FSL method consists of finding the top K/2 similar dropout and non-dropout students from the shot pool, with K being the number of shots given to the LLMs. To find these similar students, we build Facebook AI Similarity Search (FAISS) indices on the dropout and non-dropout pools for ease of retrieval. The retrieved shots are sent to the mapper to be used in the prompt generator which we detail next.
+
 It is worth noting that these indices were built on vectorized student records. We tested their effectiveness using Sentence-BERT embeddings but unfortunately, retrieved examples did not closely represent the query student data. Both the academic performance and the living conditions of the retrieved examples did not closely represent the query student.
 
 ### Prompt Generator
