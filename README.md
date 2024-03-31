@@ -1,5 +1,17 @@
-# Paper README
+# Investigating the Predictive Potential of Large Language Models in Student Dropout Prediction
+## Full architecture:
+As discussed in our paper, our method relies on Few-Shot Learning, a subset of Machine Learning utilized for tasks like classification and entity recognition in scenarios of data scarcity and transfer learning. FSL trains learners on a small, yet representative dataset, aiming for robust performance. Our approach operates as follows:
+- Student data, aimed at predicting dropout likelihood, undergoes vectorization and mapping via the Student Record Processor, treating the student as a "query".
+  
+- The Similarity Retriever selects examples, or "shots," from pre-vectorized learning data based on the vectorized query data.
 
+- The retrieved shots and query data are then processed by the Student Record Processor and sent to the Prompt Generator.
+  
+- The Prompt Generator generates prompts using a pre-specified template, which are then fed to the LLMs to generate responses.
+
+The full architecture is illustrated in the figure bellow:
+
+![architecture](Figures/approach.png)
 ## Details about the Architecture
 - [Student Record Processor](#student-record-processor)
 - [Similarity Retriever](#similarity-retriever)
@@ -28,7 +40,7 @@ Following a carefully crafted prompt template, the final generated prompt is cre
   
     • Query: the query is the task that resembles the provided examples that the LLM should infer.
 
-Finally, to generate the prompts, we utilized the web-based templating engine Jinja2 1 which is a Python package. The incorporation of such a tool makes it easier to generate prompts that have a well-defined structure.
+Finally, to generate the prompts, we utilized the web-based templating engine [Jinja 2](https://jinja.palletsprojects.com/en/3.1.x/) which is a Python package. The incorporation of such a tool makes it easier to generate prompts that have a well-defined structure.
 ## Experimental setting
 ### Dataset
 For our experimental work, an anonymized data set was provided by the Moroccan Ministry of National Education. For context, the Moroccan educational system is a K-12 educational system. The dataset contains academic, demographic, and socio-economic information about students from the first year of primary school to the last year of high school. Moreover, the data concerns the public sector of the Fes-Meknes region. Finally, the data spans from 2015/2016 to 2020/2021 school years. Table 1 showcases the feature set used for the study, feature ranges, feature mapping, as well as the percentage of missing values. Our adopted data split and dropout information are summarized in the following:
